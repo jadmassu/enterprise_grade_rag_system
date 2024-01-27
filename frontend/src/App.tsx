@@ -1,6 +1,6 @@
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import GenerateImage from "./Pages/GenerateImage";
+import PromptPage from "./Pages/promptPage";
 function App() {
 
 
@@ -25,7 +25,7 @@ function App() {
                pr-5 w-full pt-20 h-screen flex-col`}
           >
             <Routes>
-              <Route index element={<GenerateImage />} />
+              <Route index element={<PromptPage />} />
 
 
             </Routes>

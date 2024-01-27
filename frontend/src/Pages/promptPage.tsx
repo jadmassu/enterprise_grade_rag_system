@@ -3,10 +3,10 @@ interface Props {
     add: boolean
 }
 
-const GenerateImage: React.FC = () => {
+const PromptPage: React.FC = () => {
 
 
     return <>TEst</>
 }
 
-export default GenerateImage;
+export default PromptPage;

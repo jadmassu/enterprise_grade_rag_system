@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "../utils/api";
 
-export class Warranty {
+export class Prompt {
     id: number = 0;
     name: string = "";
     shortName: string = "";
@@ -19,16 +19,16 @@ interface ResStatus {
     msg: string;
 }
 interface State {
-    warrantys: { count: number; rows: Warranty[] };
-    warranty: Warranty;
+    prompts: Prompt[];
+    prompt: Prompt;
     searchParams: SearchParams;
     resStatus: ResStatus;
     loading: boolean;
 }
 
 const initialState: State = {
-    warrantys: { count: 0, rows: [] },
-    warranty: {
+    prompts: [],
+    prompt: {
         id: 0,
         name: "",
         shortName: "",
@@ -47,21 +47,21 @@ const initialState: State = {
     },
     loading: false,
 };
-const WarrantySlice = createSlice({
-    name: "warranty",
+const PromptSlice = createSlice({
+    name: "prompt",
     initialState,
     reducers: {
-        getWarrantys: (
+        getPrompts: (
             state: State,
-            action: PayloadAction<{ count: number; rows: Warranty[] }>
+            action: PayloadAction<Prompt[]>
         ) => {
-            state.warrantys = action.payload;
+            state.prompts = action.payload;
         },
-        addWarranty: (state: State, action: PayloadAction<Warranty>) => {
-            state.warranty = action.payload;
+        addPrompt: (state: State, action: PayloadAction<Prompt>) => {
+            state.prompt = action.payload;
         },
-        setWarranty: (state: State, action: PayloadAction<Warranty>) => {
-            state.warranty = action.payload;
+        setPrompt: (state: State, action: PayloadAction<Prompt>) => {
+            state.prompt = action.payload;
         },
         addResStatus: (state: State, action: PayloadAction<ResStatus>) => {
             state.resStatus = action.payload;
@@ -77,14 +77,14 @@ const WarrantySlice = createSlice({
     },
 });
 export const {
-    getWarrantys,
-    addWarranty,
+    getPrompts,
+    addPrompt,
     setLoading,
     addResStatus,
     setSearchParams,
-    setWarranty,
-} = WarrantySlice.actions;
-export default WarrantySlice.reducer;
+    setPrompt,
+} = PromptSlice.actions;
+export default PromptSlice.reducer;
 
 const setResStatus = (resStatus: ResStatus) => async (dispatch: any) => {
     dispatch(addResStatus(resStatus));
@@ -93,7 +93,7 @@ const setResStatus = (resStatus: ResStatus) => async (dispatch: any) => {
     }, 1000);
 };
 
-export const fetchWarrantys =
+export const fetchPrompts =
     (searchParams: SearchParams): any =>
         async (dispatch: any) => {
             try {
@@ -101,11 +101,10 @@ export const fetchWarrantys =
                 const { first, rows, searchText, sortColumn, sortDirection } =
                     searchParams;
                 const response = await api.get(
-                    `/warrantys?f=${first}&r=${rows}&st=${searchText}&sc=${sortColumn}&sd=${sortDirection}&`,
-                    config
+                    `/prompts?f=${first}&r=${rows}&st=${searchText}&sc=${sortColumn}&sd=${sortDirection}&`
                 );
                 let feedData = response.data;
-                dispatch(getWarrantys(feedData));
+                dispatch(getPrompts(feedData));
                 dispatch(setLoading(false));
             } catch (error: any) {
                 dispatch(setLoading(false));
@@ -118,21 +117,21 @@ export const fetchWarrantys =
             }
         };
 
-export const createWarranty =
-    (warranty: Warranty, searchParams: SearchParams): any =>
+export const createPrompt =
+    (prompt: Prompt, searchParams: SearchParams): any =>
         async (dispatch: any) => {
             try {
                 dispatch(setLoading(true));
-                const response = await api.post("/warrantys", warranty, config);
+                const response = await api.post("/prompts", prompt);
                 dispatch(
                     setResStatus({
                         status: response.status,
-                        msg: "Warranty created successfully",
+                        msg: "Prompt created successfully",
                     })
                 );
-                dispatch(fetchWarrantys(searchParams));
+                dispatch(fetchPrompts(searchParams));
                 dispatch(setLoading(false));
-                dispatch(addWarranty(response.data));
+                dispatch(addPrompt(response.data));
             } catch (error: any) {
                 dispatch(setLoading(false));
                 dispatch(
@@ -144,22 +143,22 @@ export const createWarranty =
             }
         };
 
-export const updateWarranty =
-    (warranty: Warranty, searchParams: SearchParams): any =>
+export const updatePrompt =
+    (prompt: Prompt, searchParams: SearchParams): any =>
         async (dispatch: any) => {
             try {
                 dispatch(setLoading(true));
                 const response = await api.put(
-                    `/warrantys/${warranty.id}`,
-                    warranty,
-                    config
+                    `/prompts/${prompt.id}`,
+                    prompt,
+
                 );
-                dispatch(fetchWarrantys(searchParams));
+                dispatch(fetchPrompts(searchParams));
                 dispatch(setLoading(false));
                 dispatch(
                     setResStatus({
                         status: response.status,
-                        msg: "Warranty updated sucessfuly",
+                        msg: "Prompt updated sucessfuly",
                     })
                 );
             } catch (error: any) {
@@ -173,20 +172,20 @@ export const updateWarranty =
             }
         };
 
-export const deleteWarranty =
-    (warranty: Warranty): any =>
+export const deletePrompt =
+    (prompt: Prompt): any =>
         async (dispatch: any) => {
             try {
                 dispatch(setLoading(true));
-                const response = await api.delete(`/warrantys/${warranty.id}`, config);
+                const response = await api.delete(`/prompts/${prompt.id}`,);
                 dispatch(setLoading(false));
                 dispatch(
                     setResStatus({
                         status: response.status,
-                        msg: "Warranty deleted successfully",
+                        msg: "Prompt deleted successfully",
                     })
                 );
-                dispatch(fetchWarrantys(new SearchParams()));
+                dispatch(fetchPrompts(new SearchParams()));
             } catch (error: any) {
                 dispatch(setLoading(false));
                 dispatch(
